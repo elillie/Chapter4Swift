@@ -64,13 +64,83 @@ func findMaximumSubarray(A: [Int], low: Int, high: Int) -> (low: Int, high: Int,
         
     }
 }
+// exercise 4.1-5, some problems here
+func linearFindMaxSubarray(A: [Int], low: Int, high: Int) -> (low: Int, high: Int, sum: Int) {
+    
+    var start = low
+    var end = 0
+    var sum = 0
+    var sumToIndex = 0
+    
+    for i in low...high {
+        
+        sumToIndex += A[i]
+        
+        if i == low && A[i]>0 {
+            end = i
+            sum = A[i]
+        } else if start == end && A[start] <= 0 {
+            start = i
+            end = i
+            sum = A[i]
+            sumToIndex = A[i]
+        } else if end == i-1 && A[i] > 0 {
+            end = i
+            sum += A[i]
+        } else if end < i - 1{
+            var newStart = 0
+            var newSum = 0
+            var maxSum = 0
+            for j in end + 1...i
+            {
+                newSum += A[i + end + 1 - j]
+                if newSum > maxSum {
+                    maxSum = newSum
+                    newStart = i + end + 1 - j
+                }
+            }
+            if maxSum > sum && maxSum > sumToIndex {
+                sum = maxSum
+                start = newStart
+                end = i
+                sumToIndex = sum
+            } else if sumToIndex > sum {
+                sum = sumToIndex
+                end = i
+            }
+        }
+    }
+    return (start, end, sum)
+}
 
+var A = [Int]()
 
-var A = [-3, 5, 2, 7, -3, -5, 6, 2, -7, -2, 1, 1, 8, -4, -3, 8, 14]
+for i in 0...220 {
+    var randomNum = Int(rand())
+    if randomNum % 2 == 0 {
+        A.insert(randomNum % 11, atIndex: i)
+    } else {
+        A.insert(-1 * randomNum % 11, atIndex: i)
+    }
+}
 
-let result = findMaximumSubarray(A, 0, A.count-1)
-println(result.low)
-println(result.high, result.sum)
+println(A)
 
+var result = findMaximumSubarray(A, 0, A.count-1)
+println(result)
 
+var sum = 0
+for i in result.low...result.high {
+    sum += A[i]
+}
+println(sum)
+
+result = linearFindMaxSubarray(A, 0, A.count-1)
+println(result)
+
+sum = 0
+for i in result.low...result.high {
+    sum += A[i]
+}
+println(sum)
 
